@@ -15,6 +15,16 @@ function Signup() {
             return false;
         }
         // Additional validation logic can be added here
+        
+                // Password validation (minimum 8 characters, at least one letter and one number)
+                const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+                if (!passwordRegex.test(password)) {
+                    setError('Password must be at least 8 characters long and include at least one letter and one number');
+                    return false;
+                }
+        
+                setError(null); // Clear any previous errors
+
         return true;
     };
 
