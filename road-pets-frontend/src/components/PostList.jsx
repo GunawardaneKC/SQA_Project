@@ -17,6 +17,7 @@ const PostList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredPosts, setFilteredPosts] = useState([]);
+  const [sortOrder, setSortOrder] = useState('newest'); // State for sorting order
   const postsPerPage = 8;
 
   useEffect(() => {
@@ -50,6 +51,7 @@ const PostList = () => {
   const handleSearch = () => {
     if (searchQuery) {
       const results = posts.filter(post =>
+        post.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         post.location.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredPosts(results);
@@ -57,6 +59,21 @@ const PostList = () => {
       setFilteredPosts(posts);
     }
     setCurrentPage(1);
+  };
+
+  const handleSortChange = (e) => {
+    const order = e.target.value;
+    setSortOrder(order);
+
+    const sortedPosts = [...filteredPosts].sort((a, b) => {
+      if (order === 'newest') {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      } else {
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      }
+    });
+
+    setFilteredPosts(sortedPosts);
   };
 
   // Pagination logic
@@ -79,13 +96,27 @@ const PostList = () => {
         <input
           type="text"
           className="form-control w-50 "
-          placeholder="Search by location..."
+          placeholder="Search by Name or Location..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           style={{ backgroundColor: 'transparent', borderColor: 'lightgray' }}
         />
         <div className='px-3'> </div>
         <button className="btn btn-lg" onClick={handleSearch} style={{ backgroundColor: '#ff914d', borderColor: '#ff914d' }}>Search</button>
+      </div>
+
+      {/* Filter Dropdown */}
+      <div className="mb-4 ">
+        <label htmlFor="sortOrder" className="me-2">Sort By:</label>
+        <select
+          id="sortOrder"
+          className="form-select w-auto d-inline-block"
+          value={sortOrder}
+          onChange={handleSortChange}
+        >
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+        </select>
       </div>
 
       <div className="row">
